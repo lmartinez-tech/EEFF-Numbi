@@ -35,6 +35,7 @@ const percentage = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 1 });
 const formatMoney = (value = 0) => `${value < 0 ? "(" : ""}$ ${money.format(Math.abs(value))}${value < 0 ? ")" : ""}`;
 const formatCompact = (value = 0) => `$ ${compact.format(value)}`;
 const safeRatio = (numerator: number, denominator: number) => denominator ? numerator / denominator : 0;
+const asset = (path: string) => `${import.meta.env.BASE_URL || "/"}${path.replace(/^\//, "")}`;
 
 type DisplayRow = { label: string; section?: boolean; total?: boolean; highlight?: boolean };
 
@@ -215,7 +216,7 @@ export default function Home() {
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
     >
-      <img src="/numbi-upload.png" alt="" />
+      <img src={asset("numbi-upload.png")} alt="" />
       <div><strong>{busy ? "Procesando balances…" : "Arrastra aquí los balances de Siigo"}</strong><span>Uno o varios periodos · formato .xlsx</span></div>
       <button onClick={() => inputRef.current?.click()} disabled={busy}>{busy ? "Leyendo…" : "Seleccionar archivos"}</button>
     </div>
@@ -242,18 +243,18 @@ export default function Home() {
             </div>
             <div className="hero-panel" aria-label="Proceso de la herramienta">
               <div className="panel-head"><span>Del balance a la decisión</span><span className="live-dot">3 pasos</span></div>
-              <div className="flow-step"><img src="/numbi-upload.png" alt="" /><div><small>01</small><strong>Carga</strong><span>Uno o varios balances por tercero</span></div></div>
+              <div className="flow-step"><img src={asset("numbi-upload.png")} alt="" /><div><small>01</small><strong>Carga</strong><span>Uno o varios balances por tercero</span></div></div>
               <div className="flow-line" />
-              <div className="flow-step"><img src="/numbi-calculator.png" alt="" /><div><small>02</small><strong>Valida</strong><span>Formato, movimientos, mapeo y ecuación</span></div></div>
+              <div className="flow-step"><img src={asset("numbi-calculator.png")} alt="" /><div><small>02</small><strong>Valida</strong><span>Formato, movimientos, mapeo y ecuación</span></div></div>
               <div className="flow-line" />
-              <div className="flow-step"><img src="/numbi-growth.png" alt="" /><div><small>03</small><strong>Presenta</strong><span>EEFF, indicadores y análisis por tercero</span></div></div>
-              <img className="robot" src="/numbi-assistant.png" alt="Asistente Numbi" />
+              <div className="flow-step"><img src={asset("numbi-growth.png")} alt="" /><div><small>03</small><strong>Presenta</strong><span>EEFF, indicadores y análisis por tercero</span></div></div>
+              <img className="robot" src={asset("numbi-assistant.png")} alt="Asistente Numbi" />
             </div>
           </section>
           <section className="promise-grid">
-            <article><img src="/numbi-report.png" alt="" /><div><span>Alcance de la macro</span><strong>Cuatro estados financieros</strong><p>Resultados, situación financiera, cambios en patrimonio y flujo de efectivo.</p></div></article>
-            <article><img src="/numbi-approved.png" alt="" /><div><span>Control visible</span><strong>Sin cuadrar por diferencia</strong><p>La herramienta muestra la diferencia contable real y las cuentas por confirmar.</p></div></article>
-            <article><img src="/numbi-calculator.png" alt="" /><div><span>Formato esperado</span><strong>Balance de Siigo</strong><p>Lee las filas Auxiliar / Sí para evitar dobles conteos entre niveles.</p></div></article>
+            <article><img src={asset("numbi-report.png")} alt="" /><div><span>Alcance de la macro</span><strong>Cuatro estados financieros</strong><p>Resultados, situación financiera, cambios en patrimonio y flujo de efectivo.</p></div></article>
+            <article><img src={asset("numbi-approved.png")} alt="" /><div><span>Control visible</span><strong>Sin cuadrar por diferencia</strong><p>La herramienta muestra la diferencia contable real y las cuentas por confirmar.</p></div></article>
+            <article><img src={asset("numbi-calculator.png")} alt="" /><div><span>Formato esperado</span><strong>Balance de Siigo</strong><p>Lee las filas Auxiliar / Sí para evitar dobles conteos entre niveles.</p></div></article>
           </section>
         </>
       ) : (
@@ -317,14 +318,14 @@ export default function Home() {
               {tab === "patrimonio" && (
                 <section className="report-section">
                   <SectionHeading eyebrow={analysis.latestEquityChange ? `${analysis.latestEquityChange.previousLabel} → ${analysis.latestEquityChange.label}` : "Comparativo requerido"} title="Estado de cambios en el patrimonio" description="Conciliación entre los dos cortes más recientes." />
-                  {analysis.latestEquityChange ? <div className="table-scroll compact-table"><table><thead><tr><th>Movimiento</th><th>Valor</th></tr></thead><tbody>{Object.entries(analysis.latestEquityChange.lines).map(([line, value]) => <tr className={line.includes("final") ? "highlight-row" : ""} key={line}><td>{line}</td><td className={value < 0 ? "negative" : ""}>{formatMoney(value)}</td></tr>)}</tbody></table></div> : <EmptyState icon="/numbi-report.png" title="Carga al menos dos periodos" text="El cambio patrimonial se calcula comparando dos saldos de cierre." />}
+                  {analysis.latestEquityChange ? <div className="table-scroll compact-table"><table><thead><tr><th>Movimiento</th><th>Valor</th></tr></thead><tbody>{Object.entries(analysis.latestEquityChange.lines).map(([line, value]) => <tr className={line.includes("final") ? "highlight-row" : ""} key={line}><td>{line}</td><td className={value < 0 ? "negative" : ""}>{formatMoney(value)}</td></tr>)}</tbody></table></div> : <EmptyState icon={asset("numbi-report.png")} title="Carga al menos dos periodos" text="El cambio patrimonial se calcula comparando dos saldos de cierre." />}
                 </section>
               )}
 
               {tab === "flujo" && (
                 <section className="report-section">
                   <SectionHeading eyebrow={analysis.latestCashFlow ? `${analysis.latestCashFlow.previousLabel} → ${analysis.latestCashFlow.label}` : "Método indirecto"} title="Estado de flujo de efectivo" description="Estimado desde variaciones de balance. Las partidas no identificadas quedan expuestas para conciliación." />
-                  {analysis.latestCashFlow ? <div className="table-scroll compact-table"><table><thead><tr><th>Concepto</th><th>Valor</th></tr></thead><tbody>{cashFlowRows.map((row) => row.section ? <tr className="section-row" key={row.label}><td colSpan={2}>{row.label}</td></tr> : <tr className={`${row.total ? "total-row" : ""} ${row.highlight ? "highlight-row" : ""}`} key={row.label}><td>{row.label}</td><td className={(analysis.latestCashFlow?.lines[row.label] || 0) < 0 ? "negative" : ""}>{formatMoney(analysis.latestCashFlow?.lines[row.label] || 0)}</td></tr>)}</tbody></table></div> : <EmptyState icon="/numbi-growth.png" title="Carga al menos dos periodos" text="El flujo indirecto necesita un saldo inicial y uno final." />}
+                  {analysis.latestCashFlow ? <div className="table-scroll compact-table"><table><thead><tr><th>Concepto</th><th>Valor</th></tr></thead><tbody>{cashFlowRows.map((row) => row.section ? <tr className="section-row" key={row.label}><td colSpan={2}>{row.label}</td></tr> : <tr className={`${row.total ? "total-row" : ""} ${row.highlight ? "highlight-row" : ""}`} key={row.label}><td>{row.label}</td><td className={(analysis.latestCashFlow?.lines[row.label] || 0) < 0 ? "negative" : ""}>{formatMoney(analysis.latestCashFlow?.lines[row.label] || 0)}</td></tr>)}</tbody></table></div> : <EmptyState icon={asset("numbi-growth.png")} title="Carga al menos dos periodos" text="El flujo indirecto necesita un saldo inicial y uno final." />}
                 </section>
               )}
 
