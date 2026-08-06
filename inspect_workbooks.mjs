@@ -20,14 +20,12 @@ const summaries = [];
 for (let fileIndex = 0; fileIndex < sources.length; fileIndex++) {
   const source = sources[fileIndex];
   const workbook = await SpreadsheetFile.importXlsx(await FileBlob.load(source));
-  const sheetInfo = JSON.parse((await workbook.inspect({kind:'sheet', include:'id,name', maxChars:20000})).ndjson
-    .split(/\r?\n/).filter(Boolean).map(line=>JSON.parse(line)).find(x=>x.kind==='sheet' || x.type==='sheet') ? 'null' : 'null');
   const sheetNames = workbook.worksheets.items.map(s => s.name);
   const entry = { source, sheets: [] };
   for (const sheetName of sheetNames) {
     const sheet = workbook.worksheets.getItem(sheetName);
     let usedAddress = null;
-    try { usedAddress = sheet.getUsedRange()?.address ?? null; } catch {}
+    try { usedAddress = sheet.getUsedRange()?.address ?? null; } catch { usedAddress = null; }
     const region = await workbook.inspect({
       kind: 'region', sheetId: sheetName, range: usedAddress || 'A1:Z50',
       maxChars: 5000, tableMaxRows: 12, tableMaxCols: 16, tableMaxCellChars: 100,
@@ -40,7 +38,7 @@ for (let fileIndex = 0; fileIndex < sources.length; fileIndex++) {
     if (fileIndex === 0) {
       try {
         const preview = await workbook.render({sheetName, autoCrop:'all', scale:0.8, format:'png'});
-        const safe = sheetName.replace(/[<>:\"/\\|?*]/g,'_');
+        const safe = sheetName.replace(/[<>:"/\\|?*]/g,'_');
         await fs.writeFile(path.join(outDir, `guide_${String(entry.sheets.length).padStart(2,'0')}_${safe}.png`), new Uint8Array(await preview.arrayBuffer()));
       } catch (error) {
         entry.sheets.at(-1).renderError = String(error);

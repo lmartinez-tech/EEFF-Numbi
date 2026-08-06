@@ -30,8 +30,9 @@ test("renders the Numbi EEFF application", async () => {
   const html = await response.text();
   assert.match(html, /<html lang="es">/i);
   assert.match(html, /<title>Numbi EEFF \| Estados financieros desde tu balance<\/title>/i);
-  assert.match(html, /Tus n(?:ú|&#xFA;|&uacute;)meros/i);
-  assert.match(html, /Sube tus balances de prueba por tercero/i);
+  assert.match(html, /Tus estados financieros/i);
+  assert.match(html, /balance de prueba por tercero descargado de Siigo/i);
   assert.match(html, /Seleccionar archivos/i);
+  assert.match(html, /Sin cuadrar por diferencia/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });

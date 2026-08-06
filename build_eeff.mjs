@@ -187,7 +187,7 @@ const erLabels={7:'INGRESOS',8:'Ingresos operacionales',9:'Devoluciones y descue
 for(const [r,label] of Object.entries(erLabels)) er.getRange(`A${r}`).values=[[label]];
 section(er.getRange('A7:O7'));
 const erDirect={8:'Ingresos operacionales',9:'Devoluciones y descuentos',12:'Costo de ventas y servicios',15:'Gastos de administración',16:'Gastos de ventas',20:'Otros ingresos',21:'Otros gastos',23:'Impuesto a las ganancias'};
-for(const [row,line] of Object.entries(erDirect)){
+for(const row of Object.keys(erDirect)){
   er.getRange(`B${row}`).formulas=[[`=SUMIFS('Carga BP'!$R$4:$R$10000,'Carga BP'!$A$4:$A$10000,B$5,'Carga BP'!$Q$4:$Q$10000,$A${row})`]];
   er.getRange(`B${row}:N${row}`).fillRight();
   er.getRange(`O${row}`).formulas=[[`=SUM(C${row}:N${row})`]];
@@ -211,7 +211,7 @@ const esfLabels={7:'ACTIVOS',8:'Efectivo y equivalentes',9:'Inversiones',10:'Cue
 for(const [r,label] of Object.entries(esfLabels)) esf.getRange(`A${r}`).values=[[label]];
 for(const r of [7,17,28]) section(esf.getRange(`A${r}:N${r}`));
 const esfDirect={8:'Efectivo y equivalentes',9:'Inversiones',10:'Cuentas por cobrar',11:'Inventarios',12:'Propiedad, planta y equipo',13:'Intangibles',14:'Otros activos',18:'Obligaciones financieras',19:'Proveedores',20:'Cuentas por pagar',21:'Impuestos por pagar',22:'Beneficios a empleados',23:'Provisiones',24:'Ingresos diferidos',25:'Otros pasivos',29:'Capital social',30:'Prima en colocación',31:'Reservas',32:'Resultados acumulados'};
-for(const [row,line] of Object.entries(esfDirect)){
+for(const row of Object.keys(esfDirect)){
   esf.getRange(`B${row}`).formulas=[[`=SUMIFS('Carga BP'!$R$4:$R$10000,'Carga BP'!$A$4:$A$10000,B$5,'Carga BP'!$Q$4:$Q$10000,$A${row})`]];
   esf.getRange(`B${row}:N${row}`).fillRight();
 }

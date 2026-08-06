@@ -40,4 +40,5 @@ yarn-error.log*
 /outputs/
 /analysis_artifacts/
 /data/
+/tmp/
 /work/

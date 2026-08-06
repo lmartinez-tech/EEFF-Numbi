@@ -1,53 +1,57 @@
 # Numbi EEFF
 
-Aplicación para convertir balances de prueba por tercero en estados financieros,
-controles y análisis listos para revisar. La interfaz permite cargar archivos
-Excel, clasificar cuentas, consultar resultados por periodo y descargar datos.
+Aplicación para transformar balances de prueba por tercero descargados de Siigo
+en una presentación financiera completa. Todo el procesamiento del archivo ocurre
+en el navegador: los libros no se cargan ni se almacenan en un servidor.
 
-## Requisitos
+## Qué prepara
 
-- Node.js `>=22.13.0`
-- Python 3 con `openpyxl` para los scripts de análisis de libros
-- El runtime de hojas de cálculo de Codex para los scripts `.mjs` de generación
-  y renderizado
+- Resumen ejecutivo e indicadores de capital de trabajo, liquidez, endeudamiento,
+  ROE y margen neto
+- Estado de resultados y estado de situación financiera
+- Estado de cambios en el patrimonio
+- Flujo de efectivo indirecto y partidas pendientes de conciliación
+- Cartera, proveedores y otros saldos por tercero
+- Apertura mensual de gastos y costos
+- Mapeo auditable y controles contables por periodo
 
-## Aplicación web
+La clasificación base reproduce la hoja `Setup` de la macro de referencia. Cuando
+una cuenta no existe allí, la aplicación utiliza una sugerencia PUC visible. Las
+cuentas materiales que requieren criterio contable quedan marcadas para
+confirmación manual; el modelo no crea partidas residuales para cuadrar el balance.
+
+## Formato de entrada
+
+Se aceptan uno o varios archivos `.xlsx` con la estructura del reporte **Balance
+de prueba por tercero** de Siigo. La herramienta detecta empresa, NIT y periodo,
+y procesa exclusivamente las filas `Auxiliar / Sí` para evitar doble conteo.
+
+Los periodos duplicados se reemplazan y los archivos de un NIT distinto se
+rechazan dentro de la misma sesión.
+
+## Desarrollo
+
+Requiere Node.js `>=22.13.0`.
 
 ```bash
 npm ci
 npm run dev
 ```
 
-La compilación de producción se valida con:
+Validación:
 
 ```bash
-npm run build
+npm run lint
+npm test
 ```
 
-El código principal está en `app/`; la lógica de lectura, mapeo y cálculo de los
-balances está en `app/lib/financials.ts`.
+El código principal está en `app/`; la lectura, clasificación y cálculo se
+encuentran en `app/lib/financials.ts`, y la tabla estática procedente de la macro
+en `app/lib/macro-mapping.ts`.
 
-## Pipeline de estados financieros
+## Scripts conservados
 
-Los scripts conservados desde el proyecto original trabajan en este orden:
-
-1. `extract_structure.py` y `extract_ooxml.py` inspeccionan la estructura de los
-   libros fuente.
-2. `prepare_data.py` normaliza saldos, terceros, periodos y mapeos en
-   `analysis_artifacts/normalized_data.json`.
-3. `build_eeff.mjs` genera el libro final dentro de `outputs/`.
-4. `render_final_check.mjs` produce las vistas de control del resultado.
-
-Los libros fuente no se versionan. Por defecto, los scripts los buscan en
-`data/`; también puedes indicar otra carpeta con `EEFF_DATA_DIR` y la plantilla
-de referencia con `EEFF_GUIDE_PATH`.
-
-## Contenido migrado
-
-- Aplicación web completa y configuración de Sites
-- Scripts de extracción, normalización, construcción e inspección
-- Datos normalizados usados por la última generación
-- Libro `EEFF_balance_por_tercero.xlsx`, controles y vistas previas en `outputs/`
-
-Las dependencias, cachés, temporales, identificadores de procesos y volcados de
-inspección regenerables no forman parte del proyecto versionado.
+Los scripts del proyecto anterior continúan disponibles para inspección y
+generación de libros independientes. Buscan fuentes en `data/` o en las rutas
+indicadas por `EEFF_DATA_DIR` y `EEFF_GUIDE_PATH`. Las fuentes, salidas y archivos
+temporales no se versionan.
